@@ -11,7 +11,7 @@ public class jwtGenerator
 
     public static string GenerateRandomKey()
     {
-        var key = new byte[32];
+        var key = new byte[512];
         using (var generator = RandomNumberGenerator.Create())
         {
             generator.GetBytes(key);

@@ -7,6 +7,8 @@ using SimpleBlog.Dal.Models;
 using SimpleBlog.Bll.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using SimpleBlog.Bll.Interfaces;
 
 namespace SimpleBlog.Api.Controllers
 {
@@ -14,121 +16,86 @@ namespace SimpleBlog.Api.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly BlogDbContext _context;
-        private readonly ILogger<PostsController> _logger;
+        // Controller should not contain ANY data related logic
 
-        public PostsController(BlogDbContext context, ILogger<PostsController> logger)
+        private readonly IBlogPostService _blogPostService;
+        public PostsController
+            (
+            IBlogPostService blogPostService
+            )
         {
-            _context = context;
-            _logger = logger;
+            _blogPostService = blogPostService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogPost>>> GetPosts()
         {
-            _logger.LogInformation("returning all the posts.");
-            return await _context.BlogPosts.ToListAsync();
+            return Ok(await _blogPostService.GetPostsAsync());
+
         }
 
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogPost>> GetPost(int id)
         {
-            var post = await _context.BlogPosts.FindAsync(id);
+            var post = await _blogPostService.GetPostAsync(id);
 
             if (post == null)
             {
                 return NotFound();
             }
 
-            return post;
+            return Ok(post);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<BlogPost>> PostPost(BlogPostDto postDto)
+        public async Task<ActionResult<BlogPost>> CreatePost(BlogPostDto postDto)
         {
-            var username = User.Identity?.Name;
-            _logger.LogInformation(username);
+            var result = await _blogPostService.CreatePostAsync(postDto, User);
 
-            if (string.IsNullOrEmpty(username))
+            if (!result.Success)
             {
-                _logger.LogInformation("username is not correct");
-                return Unauthorized();
+                return Unauthorized(result.Message);
             }
 
-            var post = new BlogPost
-            {
-                Title = postDto.Title,
-                Content = postDto.Content,
-                Author = username,
-                DateCreated = DateTime.UtcNow
-            };
-
-            _context.BlogPosts.Add(post);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Post created with ID {PostId} by user {Username}", post.Id, username);
-
+            var post = result.Data as BlogPost;
             return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
+
         }
 
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(int id, BlogPost post)
+        [HttpPut]
+        public async Task<ActionResult> EditPost(BlogPostDto postDto)
         {
-            if (id != post.Id)
+
+            var result = await _blogPostService.EditPostAsync(postDto);
+
+            if (!result.Success)
             {
-                _logger.LogWarning("Post ID mismatch: {Id} != {PostId}", id, post.Id);
-                return BadRequest();
+                return BadRequest(result.Message);
             }
 
-            _context.Entry(post).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PostExists(id))
-                {
-                    _logger.LogWarning("Post not found: {Id}", id);
-                    return NotFound();
-                }
-                else
-                {
-                    _logger.LogError("Concurrency error when updating post {Id}", id);
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result.Message);
         }
 
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
-            var post = await _context.BlogPosts.FindAsync(id);
+            var result = await _blogPostService.DeletePostAsync(id);
 
-            if (post == null)
+            if (!result.Success)
             {
-                _logger.LogWarning("Post not found: {Id}", id);
-                return NotFound();
+                return NotFound(result.Message);
             }
-
-            _context.BlogPosts.Remove(post);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Post deleted with ID {PostId}", post.Id);
 
             return NoContent();
         }
 
-        private bool PostExists(int id)
-        {
-            return _context.BlogPosts.Any(e => e.Id == id);
-        }
     }
 }
+
+
+
+

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleBlog.Dal.Models
 {
@@ -15,6 +16,8 @@ namespace SimpleBlog.Dal.Models
         public string Author { get; set; }
 
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+
+        public string UserId { get; set; }
 
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using SimpleBlog.Dal.Models;
 using SimpleBlog.Dal;
 using System.Text;
+using SimpleBlog.Bll.Interfaces;
+using SimpleBlog.Bll.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,6 +59,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "SimpleBlog API", Version = "v1" });
 });
+
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 
 var app = builder.Build();
 

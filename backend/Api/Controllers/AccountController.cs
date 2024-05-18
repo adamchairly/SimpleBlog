@@ -29,6 +29,7 @@ namespace SimpleBlog.Api.Controllers
         {
             var user = new User
             {
+                Id = Guid.NewGuid().ToString(),
                 UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
@@ -39,7 +40,7 @@ namespace SimpleBlog.Api.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { result = "Registration successful" });
+                return Ok("Registration successful");
             }
 
             return BadRequest(result.Errors);
@@ -51,8 +52,8 @@ namespace SimpleBlog.Api.Controllers
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var token = GenerateJwtToken(user);
-                return Ok(new { token });
+                var token = FaszomNagy(user);
+                return Ok(token);
             }
 
             return Unauthorized();
@@ -62,30 +63,53 @@ namespace SimpleBlog.Api.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return Ok(new { result = "Logout successful" });
+            return Ok("Logout successful");
         }
 
         private string GenerateJwtToken(User user)
         {
-            var claims = new[]
-            {
-        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.NameIdentifier, user.Id)
-    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Issuer"],
-                claims: claims,
+                issuer: _configuration["Jwt:ValidIssuer"],
+                audience: _configuration["Jwt:ValidAudience"],
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string FaszomNagy(User user)
+        {
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            var key = Encoding.ASCII.GetBytes
+            (_configuration["Jwt:Key"]);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+            }),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials
+                (new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            //var jwtToken = tokenHandler.WriteToken(token);
+            var stringToken = tokenHandler.WriteToken(token);
+
+            return stringToken;
         }
 
     }
