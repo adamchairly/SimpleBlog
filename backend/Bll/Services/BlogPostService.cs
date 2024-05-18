@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SimpleBlog.Api.Controllers;
 using SimpleBlog.Bll.Dtos;
 using SimpleBlog.Bll.Interfaces;
+using SimpleBlog.Bll.Result;
 using SimpleBlog.Dal;
 using SimpleBlog.Dal.Models;
-using System.Security.Claims;
 
 namespace SimpleBlog.Bll.Services
 {
@@ -39,12 +38,8 @@ namespace SimpleBlog.Bll.Services
             return post;
         }
 
-        public async Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, ClaimsPrincipal user)
+        public async Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, string userId)
         {
-            var identity = user.Identity as ClaimsIdentity;
-
-            // Find the Id of the sender
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -81,13 +76,11 @@ namespace SimpleBlog.Bll.Services
         public async Task<ServiceResult> EditPostAsync(BlogPostDto post)
         {
 
-
             if (post.Id == null)
             {
                 _logger.LogWarning("Unspecified post Id.");
                 return ServiceResult.FailureResult("Unspecified post Id.");
             }
-
 
             var postEntity = await _context.BlogPosts.SingleOrDefaultAsync(p => p.Id == post.Id);
 

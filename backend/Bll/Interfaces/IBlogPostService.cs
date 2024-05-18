@@ -12,7 +12,7 @@ namespace SimpleBlog.Bll.Interfaces
 
         public Task<BlogPost> GetPostAsync(int id);
 
-        public Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, ClaimsPrincipal user);
+        public Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, string userId);
 
         public Task<ServiceResult> EditPostAsync(BlogPostDto post);
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using SimpleBlog.Bll.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SimpleBlog.Api.Controllers
 {
@@ -51,16 +52,25 @@ namespace SimpleBlog.Api.Controllers
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<BlogPost>> CreatePost(BlogPostDto postDto)
-        {
-            var result = await _blogPostService.CreatePostAsync(postDto, User);
+        { 
+            var identity = User.Identity as ClaimsIdentity;
+
+            // Find the Id of the sender
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+
+            var result = await _blogPostService.CreatePostAsync(postDto, userId);
 
             if (!result.Success)
             {
                 return Unauthorized(result.Message);
             }
 
-            var post = result.Data as BlogPost;
-            return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
+            return Ok();
 
         }
 
