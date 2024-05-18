@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SimpleBlog.Bll.Dtos;
+﻿using SimpleBlog.Bll.Dtos;
 using SimpleBlog.Bll.Result;
 
 namespace SimpleBlog.Bll.Interfaces

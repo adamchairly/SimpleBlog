@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SimpleBlog.Bll.Dtos;
+﻿using SimpleBlog.Bll.Dtos;
 using SimpleBlog.Bll.Result;
 using SimpleBlog.Dal.Models;
-using System.Security.Claims;
+
 
 namespace SimpleBlog.Bll.Interfaces
 {
