@@ -21,13 +21,24 @@ namespace SimpleBlog.Bll.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetPostsAsync()
+        //BlogPostDto
+        public async Task<IEnumerable<BlogPostDto>> GetPostsAsync(string userId)
         {
             _logger.LogInformation("Returning all the posts.");
-            return await _context.BlogPosts.ToListAsync();
+            return await _context.BlogPosts
+                .Select(post => new BlogPostDto
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Author = post.Author,
+                    DateCreated = post.DateCreated,
+                    IsEditable = post.UserId == userId
+                })
+                .ToListAsync();
         }
 
-        public async Task<BlogPost> GetPostAsync(int id)
+        public async Task<BlogPost> GetPostAsync(int id, string userId)
         {
             _logger.LogInformation($"Returningpost with id {id}.");
 
@@ -36,9 +47,9 @@ namespace SimpleBlog.Bll.Services
             return post;
         }
 
-        public async Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, string userId)
+        public async Task<ServiceResult> CreatePostAsync(CreateBlogPostDto postDto, string userId)
         {
-
+            // Wrong user ID
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogInformation("User ID is not found.");
@@ -71,7 +82,7 @@ namespace SimpleBlog.Bll.Services
             return ServiceResult.SuccessResult("Post created.", post);
         }
 
-        public async Task<ServiceResult> EditPostAsync(BlogPostDto post)
+        public async Task<ServiceResult> EditPostAsync(BlogPostDto post, string userId)
         {
 
             if (post.Id == null)
@@ -80,11 +91,18 @@ namespace SimpleBlog.Bll.Services
                 return ServiceResult.FailureResult("Unspecified post Id.");
             }
 
+
             var postEntity = await _context.BlogPosts.SingleOrDefaultAsync(p => p.Id == post.Id);
 
             if (postEntity == null)
             {
                 return ServiceResult.FailureResult("Post not found.");
+            }
+
+            // The user can't edit this post.
+            if (postEntity.UserId != userId)
+            {
+                return ServiceResult.FailureResult("Unauthorized to edit this post.");
             }
 
             postEntity.Title = post.Title;
@@ -95,7 +113,7 @@ namespace SimpleBlog.Bll.Services
             return ServiceResult.SuccessResult("Post edited succesfully.");
         }
 
-        public async Task<ServiceResult> DeletePostAsync(int id)
+        public async Task<ServiceResult> DeletePostAsync(int id, string userId)
         {
             var post = await _context.BlogPosts.FindAsync(id);
 
@@ -103,6 +121,13 @@ namespace SimpleBlog.Bll.Services
             {
                 _logger.LogWarning("Post not found: {Id}", id);
                 return ServiceResult.FailureResult("Post not found.");
+            }
+
+
+            // The user can't delete this post.
+            if (post.UserId != userId)
+            {
+                return ServiceResult.FailureResult("Unauthorized to delete this post.");
             }
 
             _context.BlogPosts.Remove(post);

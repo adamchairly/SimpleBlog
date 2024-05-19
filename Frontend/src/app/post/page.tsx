@@ -15,6 +15,7 @@ const CreatePost = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+        console.log("Token:", token);
         try {
             await axios.post(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/posts`,
@@ -29,7 +30,13 @@ const CreatePost = () => {
             toast.success('Post created successfully');
             router.push('/');
         } catch (error) {
-            toast.error('Failed to create post');
+            if (error.response) {
+                console.error("Server responded with an error:", error.response.data);
+                toast.error(error.response.data.title || 'Failed to create post');
+            } else {
+                console.error("Error creating post:", error);
+                toast.error('Failed to create post');
+            }
         }
     };
 

@@ -31,7 +31,12 @@ namespace SimpleBlog.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogPost>>> GetPosts()
         {
-            return Ok(await _blogPostService.GetPostsAsync());
+            var identity = User.Identity as ClaimsIdentity;
+
+            // Find the Id of the sender
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return Ok(await _blogPostService.GetPostsAsync(userId));
 
         }
 
@@ -39,7 +44,12 @@ namespace SimpleBlog.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogPost>> GetPost(int id)
         {
-            var post = await _blogPostService.GetPostAsync(id);
+            var identity = User.Identity as ClaimsIdentity;
+
+            // Find the Id of the sender
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var post = await _blogPostService.GetPostAsync(id, userId);
 
             if (post == null)
             {
@@ -51,16 +61,16 @@ namespace SimpleBlog.Api.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<BlogPost>> CreatePost(BlogPostDto postDto)
-        { 
+        public async Task<ActionResult<BlogPost>> CreatePost(CreateBlogPostDto postDto)
+        {
             var identity = User.Identity as ClaimsIdentity;
 
             // Find the Id of the sender
             var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(userId))
             {
-                return BadRequest();
+                return BadRequest("User ID not found.");
             }
 
             var result = await _blogPostService.CreatePostAsync(postDto, userId);
@@ -71,15 +81,22 @@ namespace SimpleBlog.Api.Controllers
             }
 
             return Ok();
-
         }
 
         [Authorize]
         [HttpPut]
         public async Task<ActionResult> EditPost(BlogPostDto postDto)
         {
+            // Authorization handling
+            var identity = User.Identity as ClaimsIdentity;
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var result = await _blogPostService.EditPostAsync(postDto);
+            if (userId.IsNullOrEmpty())
+            {
+                return BadRequest("User ID is not found.");
+            }
+
+            var result = await _blogPostService.EditPostAsync(postDto, userId);
 
             if (!result.Success)
             {
@@ -93,7 +110,16 @@ namespace SimpleBlog.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
-            var result = await _blogPostService.DeletePostAsync(id);
+            // Authorization handling
+            var identity = User.Identity as ClaimsIdentity;
+            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+
+            var result = await _blogPostService.DeletePostAsync(id, userId);
 
             if (!result.Success)
             {

@@ -7,14 +7,14 @@ namespace SimpleBlog.Bll.Interfaces
 {
     public interface IBlogPostService
     {
-        public Task<IEnumerable<BlogPost>> GetPostsAsync();
+        public Task<IEnumerable<BlogPostDto>> GetPostsAsync(string userId);
 
-        public Task<BlogPost> GetPostAsync(int id);
+        public Task<BlogPost> GetPostAsync(int id, string userId);
 
-        public Task<ServiceResult> CreatePostAsync(BlogPostDto postDto, string userId);
+        public Task<ServiceResult> CreatePostAsync(CreateBlogPostDto postDto, string userId);
 
-        public Task<ServiceResult> EditPostAsync(BlogPostDto post);
+        public Task<ServiceResult> EditPostAsync(BlogPostDto post, string userId);
 
-        Task<ServiceResult> DeletePostAsync(int id);
+        Task<ServiceResult> DeletePostAsync(int id, string userId);
     }
 }
