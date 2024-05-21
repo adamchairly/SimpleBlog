@@ -5,6 +5,7 @@ namespace SimpleBlog.Api.Controllers.Helpers
 {
     public static class ClaimsHelper
     {
+        // Gets the user ID
         public static string GetUserId(ClaimsPrincipal user)
         {
             var identity = user.Identity as ClaimsIdentity;

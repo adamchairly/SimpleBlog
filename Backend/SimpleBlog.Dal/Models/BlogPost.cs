@@ -16,6 +16,7 @@ namespace SimpleBlog.Dal.Models
 
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
+        // The creator of the post
         public string UserId { get; set; }
 
     }
