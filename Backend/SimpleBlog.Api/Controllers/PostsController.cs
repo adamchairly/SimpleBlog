@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using SimpleBlog.Dal;
 using SimpleBlog.Dal.Models;
 using SimpleBlog.Bll.Dtos;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Security.Claims;
 using SimpleBlog.Bll.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -21,10 +16,7 @@ namespace SimpleBlog.Api.Controllers
         // Controller should not contain ANY logic related data
 
         private readonly IBlogPostService _blogPostService;
-        public PostsController
-            (
-            IBlogPostService blogPostService
-            )
+        public PostsController (IBlogPostService blogPostService)
         {
             _blogPostService = blogPostService;
         }
@@ -37,7 +29,7 @@ namespace SimpleBlog.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogPostDto>>> GetPosts()
         {
-            string userId = ClaimsExtension.GetUserId(User);
+            string userId = ClaimsHelper.GetUserId(User);
 
             return Ok(await _blogPostService.GetPostsAsync(userId));
 
@@ -52,7 +44,7 @@ namespace SimpleBlog.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogPostDto>> GetPost(int id)
         {
-            string userId = ClaimsExtension.GetUserId(User);
+            string userId = ClaimsHelper.GetUserId(User);
 
             var post = await _blogPostService.GetPostAsync(id, userId);
 
@@ -75,7 +67,7 @@ namespace SimpleBlog.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<BlogPost>> CreatePost(CreateBlogPostDto postDto)
         {
-            string userId = ClaimsExtension.GetUserId(User);
+            string userId = ClaimsHelper.GetUserId(User);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -103,7 +95,7 @@ namespace SimpleBlog.Api.Controllers
         [HttpPut]
         public async Task<ActionResult> EditPost(EditBlogPostDto postDto)
         {
-            string userId = ClaimsExtension.GetUserId(User);
+            string userId = ClaimsHelper.GetUserId(User);
 
             if (userId.IsNullOrEmpty())
             {

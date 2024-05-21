@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SimpleBlog.Bll.Dtos;
 using SimpleBlog.Bll.Interfaces;
-using System.Threading.Tasks;
 
 namespace SimpleBlog.Api.Controllers
 {
@@ -11,44 +10,54 @@ namespace SimpleBlog.Api.Controllers
     {
         private readonly IAccountService _accountService;
 
-        public AccountController(
-            IAccountService accountService
-            )
+        public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Registration for an user.
+        /// </summary>
+        /// <returns> </returns>
+        /// <response code="200">Registration was succesful.</response>
+        /// <response code="400">Bad request.</response>
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        public async Task<ActionResult> Register([FromBody] RegisterDto model)
         {
-            var result = await _accountService.RegisterAsync(model);
+            await _accountService.RegisterAsync(model);
 
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
-
-            return Ok(result.Message);
+            return Ok();
         }
 
+        /// <summary>
+        /// Login for an user.
+        /// </summary>
+        /// <returns> </returns>
+        /// <response code="200">Login was succesfull.</response>
+        /// <response code="401">Unathorized - credentials doesn't matc.</response>
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<ActionResult> Login([FromBody] LoginDto model)
         {
-            var result = await _accountService.LoginAsync(model);
+            string token = await _accountService.LoginAsync(model);
 
-            if (!result.Success)
+            if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized(result.Message);
+                return Unauthorized();
             }
 
-            return Ok(new { token = result.Data });
+            return Ok(token);
         }
 
+        /// <summary>
+        /// Logout an user.
+        /// </summary>
+        /// <returns> </returns>
+        /// <response code="200">Logout was succesful.</response>
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult> Logout()
         {
-            var result = await _accountService.LogoutAsync();
-            return Ok(result.Message);
+            await _accountService.LogoutAsync();
+            return Ok();
         }
     }
 }

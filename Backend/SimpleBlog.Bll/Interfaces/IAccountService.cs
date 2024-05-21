@@ -5,8 +5,8 @@ namespace SimpleBlog.Bll.Interfaces
 {
     public interface IAccountService
     {
-        Task<ServiceResult> RegisterAsync(RegisterDto model);
-        Task<ServiceResult> LoginAsync(LoginDto model);
-        Task<ServiceResult> LogoutAsync();
+        Task RegisterAsync(RegisterDto model);
+        Task<string> LoginAsync(LoginDto model);
+        Task LogoutAsync();
     }
 }

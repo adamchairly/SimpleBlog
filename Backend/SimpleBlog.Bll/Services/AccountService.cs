@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SimpleBlog.Bll.Dtos;
+using SimpleBlog.Bll.Exceptions;
 using SimpleBlog.Bll.Interfaces;
 using SimpleBlog.Bll.Result;
 using SimpleBlog.Dal.Models;
@@ -18,52 +19,42 @@ namespace SimpleBlog.Bll.Services
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AccountService(
-            UserManager<User> userManager, 
-            SignInManager<User> signInManager, 
-            IConfiguration configuration)
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
         }
-        public async Task<ServiceResult> RegisterAsync(RegisterDto model)
+        public async Task RegisterAsync(RegisterDto dto)
         {
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
-                UserName = model.Username,
-                Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName
+                UserName = dto.Username,
+                Email = dto.Email,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName
             };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                return ServiceResult.SuccessResult("Registration successful");
-            }
-
-            return ServiceResult.FailureResult(string.Join(", ", result.Errors.Select(e => e.Description)));
+            _ = await _userManager.CreateAsync(user, dto.Password) 
+                ?? throw new AuthenticationException("Registration failed");
         }
 
-        public async Task<ServiceResult> LoginAsync(LoginDto model)
+        public async Task<string> LoginAsync(LoginDto model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var token = GenerateJwtToken(user);
-                return ServiceResult.SuccessResult("Login successful", token);
+                return token;
             }
 
-            return ServiceResult.FailureResult("Invalid username or password.");
+            throw new AuthenticationException("Login failed");
+
         }
 
-        public async Task<ServiceResult> LogoutAsync()
+        public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
-            return ServiceResult.SuccessResult("Logout successful");
         }
 
         private string GenerateJwtToken(User user)
