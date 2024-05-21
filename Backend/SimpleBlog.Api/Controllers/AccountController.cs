@@ -34,7 +34,7 @@ namespace SimpleBlog.Api.Controllers
         /// </summary>
         /// <returns> </returns>
         /// <response code="200">Login was succesfull.</response>
-        /// <response code="401">Unathorized - credentials doesn't matc.</response>
+        /// <response code="401">Unathorized - credentials doesn't match.</response>
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginDto model)
         {

@@ -74,12 +74,8 @@ namespace SimpleBlog.Api.Controllers
                 return BadRequest();
             }
 
-            var result = await _blogPostService.CreatePostAsync(postDto, userId);
+            await _blogPostService.CreatePostAsync(postDto, userId);
 
-            if (!result.Success)
-            {
-                return Unauthorized(result.Message);
-            }
 
             return Ok();
         }
@@ -102,21 +98,17 @@ namespace SimpleBlog.Api.Controllers
                 return BadRequest();
             }
 
-            var result = await _blogPostService.EditPostAsync(postDto, userId);
+            await _blogPostService.EditPostAsync(postDto, userId);
 
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
 
-            return Ok(result.Message);
+            return Ok();
         }
 
         /// <summary>
         /// Deletes a specific post. User must be authorized.
         /// </summary>
         /// <returns> </returns>
-        /// <response code="200">Posts succesfully edited.</response>
+        /// <response code="204">Posts succesfully deleted.</response>
         /// <response code="400">User id not valid.</response>
         /// /// <response code="404">Post is not found with the ID.</response>
         [Authorize]
@@ -132,12 +124,7 @@ namespace SimpleBlog.Api.Controllers
                 return BadRequest();
             }
 
-            var result = await _blogPostService.DeletePostAsync(id, userId);
-
-            if (!result.Success)
-            {
-                return NotFound(result.Message);
-            }
+            await _blogPostService.DeletePostAsync(id, userId);
 
             return NoContent();
         }

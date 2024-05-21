@@ -7,6 +7,7 @@ using SimpleBlog.Dal;
 using System.Text;
 using SimpleBlog.Bll.Interfaces;
 using SimpleBlog.Bll.Services;
+using SimpleBlog.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure Entity Framework and Identity
+// Configure Entity Framework and Identity, and MS SQL
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -74,6 +75,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SimpleBlog API V1"));
 }
 
+// Middlewares
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

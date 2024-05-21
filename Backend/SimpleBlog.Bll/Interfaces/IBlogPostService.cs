@@ -1,7 +1,4 @@
 ﻿using SimpleBlog.Bll.Dtos;
-using SimpleBlog.Bll.Result;
-using SimpleBlog.Dal.Models;
-
 
 namespace SimpleBlog.Bll.Interfaces
 {
@@ -11,10 +8,10 @@ namespace SimpleBlog.Bll.Interfaces
 
         public Task<BlogPostDto> GetPostAsync(int id, string userId);
 
-        public Task<ServiceResult> CreatePostAsync(CreateBlogPostDto postDto, string userId);
+        public Task CreatePostAsync(CreateBlogPostDto postDto, string userId);
 
-        public Task<ServiceResult> EditPostAsync(EditBlogPostDto post, string userId);
+        public Task EditPostAsync(EditBlogPostDto post, string userId);
 
-        public Task<ServiceResult> DeletePostAsync(int id, string userId);
+        public Task DeletePostAsync(int id, string userId);
     }
 }

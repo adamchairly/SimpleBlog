@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace SimpleBlog.Api.Controllers.Helpers
 {
-    public static class ClaimsExtension
+    public static class ClaimsHelper
     {
         public static string GetUserId(ClaimsPrincipal user)
         {

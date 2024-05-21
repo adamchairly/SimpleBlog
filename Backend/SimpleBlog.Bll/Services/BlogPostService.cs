@@ -11,17 +11,14 @@ namespace SimpleBlog.Bll.Services
     public class BlogPostService : IBlogPostService
     {
         private readonly BlogDbContext _context;
-        private readonly ILogger<BlogPostService> _logger;
 
-        public BlogPostService(BlogDbContext context, ILogger<BlogPostService> logger)
+        public BlogPostService(BlogDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<BlogPostDto>> GetPostsAsync(string userId)
         {
-            _logger.LogInformation("Returning all the posts.");
 
             return await _context.BlogPosts
                 .Select(post => new BlogPostDto
@@ -38,7 +35,6 @@ namespace SimpleBlog.Bll.Services
 
         public async Task<BlogPostDto> GetPostAsync(int id, string userId)
         {
-            _logger.LogInformation($"Returning post with id {id}.");
 
             var post = await _context.BlogPosts.FindAsync(id);
 
@@ -81,9 +77,6 @@ namespace SimpleBlog.Bll.Services
 
             _context.BlogPosts.Add(post);
             await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Post created with ID {PostId} by user {Username}",
-                post.Id, $"{userQuery.FirstName} {userQuery.LastName}");
         }
 
         public async Task EditPostAsync(EditBlogPostDto post, string userId)
@@ -127,7 +120,6 @@ namespace SimpleBlog.Bll.Services
             _context.BlogPosts.Remove(post);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Post deleted with ID {PostId}", post.Id);
         }
     }
 }

@@ -17,7 +17,7 @@ const Login = () => {
         event.preventDefault();
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/account/login`, { username, password });
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.data);
             toast.success('Login successful');
             router.push('/');
         } catch (error) {
