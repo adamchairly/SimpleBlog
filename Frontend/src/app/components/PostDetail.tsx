@@ -1,7 +1,6 @@
-// components/PostDetail.tsx
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import formatDate from '../app/util/formatDate'
+import formatDate from '../../util/formatDate'
 
 interface PostDetailProps {
     id: number;

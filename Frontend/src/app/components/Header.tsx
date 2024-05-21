@@ -27,8 +27,9 @@ const Header = () => {
         }
     };
 
+    // Wait for mounting: to avoid nextjs hydration error
     if (!isMounted) {
-        return null; // Render nothing until the component is mounted
+        return null;
     }
 
     return (
