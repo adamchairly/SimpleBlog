@@ -36,19 +36,17 @@ namespace SimpleBlog.Bll.Services
         public async Task<BlogPostDto> GetPostAsync(int id, string userId)
         {
 
-            var post = await _context.BlogPosts.FindAsync(id);
-
-            var dto = new BlogPostDto
-            {
-                Id = post.Id,
-                Title = post.Title,
-                Content = post.Content,
-                Author = post.Author,
-                DateCreated = post.DateCreated,
-                IsEditable = post.UserId == userId
-            };
-
-            return dto;
+            return await _context.BlogPosts
+                .Select(post => new BlogPostDto
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Author = post.Author,
+                    DateCreated = post.DateCreated,
+                    IsEditable = post.UserId == userId
+                }).SingleAsync(x => x.Id == id);
+               
         }
 
         public async Task CreatePostAsync(CreateBlogPostDto postDto, string userId)
