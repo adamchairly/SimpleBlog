@@ -69,11 +69,6 @@ namespace SimpleBlog.Api.Controllers
         {
             string userId = ClaimsHelper.GetUserId(User);
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest();
-            }
-
             await _blogPostService.CreatePostAsync(postDto, userId);
 
 
@@ -86,17 +81,11 @@ namespace SimpleBlog.Api.Controllers
         /// </summary>
         /// <returns> </returns>
         /// <response code="200">Posts succesfully edited.</response>
-        /// <response code="400">User id not valid.</response>
         [Authorize]
         [HttpPut]
         public async Task<ActionResult> EditPost(EditBlogPostDto postDto)
         {
             string userId = ClaimsHelper.GetUserId(User);
-
-            if (userId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
 
             await _blogPostService.EditPostAsync(postDto, userId);
 
@@ -109,20 +98,12 @@ namespace SimpleBlog.Api.Controllers
         /// </summary>
         /// <returns> </returns>
         /// <response code="204">Posts succesfully deleted.</response>
-        /// <response code="400">User id not valid.</response>
-        /// /// <response code="404">Post is not found with the ID.</response>
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePost(int id)
         {
-            // Authorization handling
-            var identity = User.Identity as ClaimsIdentity;
-            var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string userId = ClaimsHelper.GetUserId(User);
 
-            if (userId.IsNullOrEmpty())
-            {
-                return BadRequest();
-            }
 
             await _blogPostService.DeletePostAsync(id, userId);
 
