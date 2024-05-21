@@ -45,6 +45,11 @@ Then you can build the solution and that will run the server on localhost:7000
 cd Frontend
 npm install
 ```
+create a file named called .env.local with this value:
+```
+NEXT_PUBLIC_API_BASE_URL=https://localhost:7000
+```
+
 then
 ```sh
 npm run dev
