@@ -21,10 +21,10 @@ namespace SimpleBlog.Bll.Services
             _logger = logger;
         }
 
-        //BlogPostDto
         public async Task<IEnumerable<BlogPostDto>> GetPostsAsync(string userId)
         {
             _logger.LogInformation("Returning all the posts.");
+
             return await _context.BlogPosts
                 .Select(post => new BlogPostDto
                 {
@@ -38,13 +38,23 @@ namespace SimpleBlog.Bll.Services
                 .ToListAsync();
         }
 
-        public async Task<BlogPost> GetPostAsync(int id, string userId)
+        public async Task<BlogPostDto> GetPostAsync(int id, string userId)
         {
-            _logger.LogInformation($"Returningpost with id {id}.");
+            _logger.LogInformation($"Returning post with id {id}.");
 
             var post = await _context.BlogPosts.FindAsync(id);
 
-            return post;
+            var dto = new BlogPostDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                Author = post.Author,
+                DateCreated = post.DateCreated,
+                IsEditable = post.UserId == userId
+            };
+
+            return dto;
         }
 
         public async Task<ServiceResult> CreatePostAsync(CreateBlogPostDto postDto, string userId)
@@ -82,7 +92,7 @@ namespace SimpleBlog.Bll.Services
             return ServiceResult.SuccessResult("Post created.", post);
         }
 
-        public async Task<ServiceResult> EditPostAsync(BlogPostDto post, string userId)
+        public async Task<ServiceResult> EditPostAsync(EditBlogPostDto post, string userId)
         {
 
             if (post.Id == null)
@@ -107,6 +117,7 @@ namespace SimpleBlog.Bll.Services
 
             postEntity.Title = post.Title;
             postEntity.Content = post.Content;
+            postEntity.DateCreated = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 

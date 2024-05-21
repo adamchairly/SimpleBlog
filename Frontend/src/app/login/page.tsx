@@ -1,3 +1,4 @@
+// pages/login.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -5,7 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Header from '../../components/Header';
 import Link from 'next/link';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -28,9 +29,9 @@ const Login = () => {
     return (
         <div>
             <Header />
-            <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-top">
-                <h1 className="text-3xl mb-6">Login</h1>
-                <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
+            <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justifytop">
+                <h1 className="text-3xl font-bold mb-8 text-gray-800">Login</h1>
+                <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6 bg-white p-8 rounded-lg shadow-md">
                     <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                             Username
@@ -60,19 +61,18 @@ const Login = () => {
                     <div className="flex items-center justify-between">
                         <button
                             type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
                             Login
                         </button>
                         <Link href="/signup" legacyBehavior>
-                            <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+                            <a className="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
                                 Sign Up
                             </a>
                         </Link>
                     </div>
                 </form>
             </div>
-            <ToastContainer />
         </div>
     );
 };

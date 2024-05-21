@@ -1,3 +1,4 @@
+// pages/signup.tsx
 "use client";
 
 import React, { useState } from 'react';
@@ -37,8 +38,8 @@ const Signup = () => {
         <div>
             <Header />
             <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-top">
-                <h1 className="text-3xl mb-6">Sign Up</h1>
-                <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
+                <h1 className="text-3xl font-bold mb-8 text-gray-800">Sign Up</h1>
+                <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6 bg-white p-8 rounded-lg shadow-md">
                     <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                             Username
@@ -107,12 +108,12 @@ const Signup = () => {
                     <div className="flex items-center justify-between">
                         <button
                             type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
                             Sign Up
                         </button>
                         <Link href="/login" legacyBehavior>
-                            <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+                            <a className="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
                                 Login
                             </a>
                         </Link>

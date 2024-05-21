@@ -1,25 +1,48 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import Header from '../../components/Header';
-import {toast } from 'react-toastify';
+import { useRouter, useParams } from 'next/navigation';
+import Header from '../../../components/Header';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const CreatePost = () => {
+const EditPost = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { id } = useParams();
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/posts/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                setTitle(response.data.title);
+                setContent(response.data.content);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching post:", error);
+                toast.error('Failed to fetch post data');
+                setLoading(false);
+            }
+        };
+
+        fetchPost();
+    }, [id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-        console.log("Token:", token);
         try {
-            await axios.post(
+            await axios.put(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/posts`,
-                { title, content },
+                { id, title, content },
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -27,24 +50,28 @@ const CreatePost = () => {
                     }
                 }
             );
-            toast.success('Post created successfully.');
+            toast.success('Post updated successfully');
             router.push('/');
         } catch (error) {
             if (error.response) {
                 console.error("Server responded with an error:", error.response.data);
-                toast.error(error.response.data.title || 'Failed to create post');
+                toast.error(error.response.data.title || 'Failed to update post');
             } else {
-                console.error("Error creating post:", error);
-                toast.error('Failed to create post');
+                console.error("Error updating post:", error);
+                toast.error('Failed to update post');
             }
         }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
             <Header />
             <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-top">
-                <h1 className="text-3xl mb-6">Create a New Post</h1>
+                <h1 className="text-3xl mb-6">Edit Post</h1>
                 <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
                     <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
@@ -76,13 +103,14 @@ const CreatePost = () => {
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Create Post
+                            Update Post
                         </button>
                     </div>
                 </form>
             </div>
+            
         </div>
     );
 };
 
-export default CreatePost;
+export default EditPost;

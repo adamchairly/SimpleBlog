@@ -1,4 +1,7 @@
+// components/PostDetail.tsx
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import formatDate from '../app/util/formatDate'
 
 interface PostDetailProps {
     id: number;
@@ -12,24 +15,30 @@ interface PostDetailProps {
 }
 
 const PostDetail: React.FC<PostDetailProps> = ({ id, title, content, author, dateCreated, isEditable, onDelete, onEdit }) => {
+    const router = useRouter();
+
+    const handleViewDetail = () => {
+        router.push(`/posts/${id}`);
+    };
+
     return (
-        <div className="p-4 border rounded">
-            <h2 className="text-xl font-bold">{title}</h2>
-            <p className="text-gray-700">{content}</p>
-            <p className="text-sm text-gray-500">By {author} on {new Date(dateCreated).toLocaleDateString()}</p>
+        <div onClick={handleViewDetail} className="cursor-pointer p-6 border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-600 bg-white">
+            <h2 className="text-2xl font-bold mb-2 text-gray-800">{title}</h2>
+            <p className="text-gray-600 mb-4">{content}</p>
+            <p className="text-sm text-gray-400 mb-4">By {author} on {formatDate(dateCreated)}</p>
             {isEditable && (
-                <div className="mt-4 flex space-x-2">
+                <div className="flex space-x-2">
                     <button
-                        onClick={() => onEdit(id)}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={(e) => { e.stopPropagation(); onEdit(id); }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
                     >
                         Edit
                     </button>
                     <button
-                        onClick={() => onDelete(id)}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={(e) => { e.stopPropagation(); onDelete(id); }}
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
                     >
-                        X
+                        Delete
                     </button>
                 </div>
             )}

@@ -1,3 +1,4 @@
+// pages/index.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -5,6 +6,8 @@ import axios from 'axios';
 import PostDetail from '../components/PostDetail';
 import Header from '../components/Header';
 import { useRouter } from 'next/navigation';
+import './globals.css';
+import { toast } from 'react-toastify';
 
 interface Post {
     id: number;
@@ -29,8 +32,10 @@ const Home = () => {
                     }
                 });
                 setPosts(response.data);
+
             } catch (error) {
                 console.error("Error fetching posts:", error);
+                toast.error("Error fetching posts.");
             }
         };
 
@@ -45,8 +50,10 @@ const Home = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            setPosts(posts.filter(post => post.id !== id));
+           setPosts(posts.filter(post => post.id !== id));
+           toast.success("Post deleted succesfully!");
         } catch (error) {
+            toast.error("Failed deleting post");
             console.error("Error deleting post:", error);
         }
     };
@@ -56,13 +63,13 @@ const Home = () => {
     };
 
     return (
-        <div>
+        <div className = "">
             <Header />
             <div className="container mx-auto px-4 py-6">
-                <h1 className="text-2xl mb-4">Blog Posts</h1>
-                <ul className="space-y-4">
+                <h1 className="text-4xl font-bold mb-8 text-gray-800">Blog Posts</h1>
+                <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {posts.map((post) => (
-                        <li key={post.id} className="">
+                        <li key={post.id}>
                             <PostDetail
                                 id={post.id}
                                 title={post.title}

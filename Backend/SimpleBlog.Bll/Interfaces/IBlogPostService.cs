@@ -9,12 +9,12 @@ namespace SimpleBlog.Bll.Interfaces
     {
         public Task<IEnumerable<BlogPostDto>> GetPostsAsync(string userId);
 
-        public Task<BlogPost> GetPostAsync(int id, string userId);
+        public Task<BlogPostDto> GetPostAsync(int id, string userId);
 
         public Task<ServiceResult> CreatePostAsync(CreateBlogPostDto postDto, string userId);
 
-        public Task<ServiceResult> EditPostAsync(BlogPostDto post, string userId);
+        public Task<ServiceResult> EditPostAsync(EditBlogPostDto post, string userId);
 
-        Task<ServiceResult> DeletePostAsync(int id, string userId);
+        public Task<ServiceResult> DeletePostAsync(int id, string userId);
     }
 }
