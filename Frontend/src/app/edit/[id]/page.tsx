@@ -34,7 +34,6 @@ const EditPost = () => {
                     handleSubmit={handleSubmit}
                 />
             </div>
-            <ToastContainer />
         </div>
     );
 };

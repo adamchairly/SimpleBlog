@@ -32,7 +32,6 @@ const PostDetailPage = () => {
                     />
                 )}
             </div>
-            <ToastContainer />
         </div>
     );
 };

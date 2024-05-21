@@ -11,7 +11,7 @@ const useCreatePost = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-        console.log("Token:", token);
+        //console.log("Token:", token);
         try {
             await createPost({ title, content }, token);
             toast.success('Post created successfully.');
