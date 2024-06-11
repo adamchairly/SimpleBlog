@@ -4,7 +4,6 @@ import React from 'react';
 import Header from '../../components/Header';
 import EditPostForm from '../../components/EditPostForm';
 import useEditPost from '../../../hooks/useEditPost';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const EditPost = () => {

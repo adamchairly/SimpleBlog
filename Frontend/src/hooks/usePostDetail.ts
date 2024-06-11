@@ -22,7 +22,8 @@ const usePostDetail = () => {
         const fetchPost = async () => {
             const token = localStorage.getItem('token');
             try {
-                const data = await getPost(id, token);
+                const postId = parseInt(id[0], 10);
+                const data = await getPost(postId, token);
                 setPost(data);
                 setLoading(false);
             } catch (error) {
