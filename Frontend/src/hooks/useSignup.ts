@@ -54,7 +54,7 @@ const credentialChecker = (inputs: string[]) => {
 
 const nameChecker = (inputs: string[]) => {
     for (const input of inputs) {
-        if (input.length > 15 || input.length < 6) {
+        if (input.length > 15 || input.length < 3) {
             toast.error("First name and last name must be between 6 and 15 characters.");
             return true; 
         }
