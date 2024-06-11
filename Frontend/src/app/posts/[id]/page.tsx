@@ -4,7 +4,6 @@ import React from 'react';
 import Header from '../../components/Header';
 import PostDetail from '../../components/PostDetail';
 import usePostDetail from '../../../hooks/usePostDetail';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const PostDetailPage = () => {
@@ -27,8 +26,8 @@ const PostDetailPage = () => {
                         author={post.author}
                         dateCreated={post.dateCreated}
                         isEditable={post.isEditable}
-                        onDelete={() => handleDelete(post.id)}
-                        onEdit={() => handleEdit(post.id)}
+                        onDelete={() => handleDelete()}
+                        onEdit={() => handleEdit()}
                     />
                 )}
             </div>

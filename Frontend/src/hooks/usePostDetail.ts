@@ -16,13 +16,16 @@ const usePostDetail = () => {
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { id } = useParams();
+    const { id: rawId } = useParams<{ id: string | string[] }>();
+
+    // I think there must be more optimal solution .. :(
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
+    const postId = parseInt(id, 10);
 
     useEffect(() => {
         const fetchPost = async () => {
             const token = localStorage.getItem('token');
             try {
-                const postId = parseInt(id[0], 10);
                 const data = await getPost(postId, token);
                 setPost(data);
                 setLoading(false);
@@ -34,9 +37,9 @@ const usePostDetail = () => {
         };
 
         fetchPost();
-    }, [id]);
+    }, [postId]); 
 
-    const handleDelete = async (postId: number) => {
+    const handleDelete = async () => {
         try {
             const token = localStorage.getItem('token');
             await deletePost(postId, token);
@@ -48,7 +51,7 @@ const usePostDetail = () => {
         }
     };
 
-    const handleEdit = (postId: number) => {
+    const handleEdit = () => {
         router.push(`/edit/${postId}`);
     };
 

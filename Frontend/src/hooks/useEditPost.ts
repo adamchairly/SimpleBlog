@@ -8,13 +8,16 @@ const useEditPost = () => {
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { id } = useParams();
+    const { id: rawId } = useParams<{ id: string | string[] }>();
+
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
+    const postId = parseInt(id, 10);
 
     useEffect(() => {
+
         const fetchPost = async () => {
             const token = localStorage.getItem('token');
             try {
-                const postId = parseInt(id[0], 10);
                 const data = await getPost(postId, token);
                 setTitle(data.title);
                 setContent(data.content);
@@ -27,14 +30,13 @@ const useEditPost = () => {
         };
 
         fetchPost();
-    }, [id]);
+    }, [postId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
             //console.log(id.toString());
-            const postId = parseInt(id[0], 10);
             await updatePost(postId, title, content, token);
             toast.success('Post updated successfully');
             router.push('/');

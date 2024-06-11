@@ -13,6 +13,9 @@ const useSignup = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if(credentialChecker([username,password]) || nameChecker([firstName, lastName])) return;
+
         try {
             await registerUser({ username, email, password, firstName, lastName });
             toast.success('Registration successful');
@@ -36,6 +39,27 @@ const useSignup = () => {
         setLastName,
         handleSubmit,
     };
+};
+
+
+const credentialChecker = (inputs: string[]) => {
+    for (const input of inputs) {
+        if (input.length > 15 || input.length < 6) {
+            toast.error("Username & password must be between 6 and 15 characters.");
+            return true; 
+        }
+    }
+    return false; 
+};
+
+const nameChecker = (inputs: string[]) => {
+    for (const input of inputs) {
+        if (input.length > 15 || input.length < 6) {
+            toast.error("First name and last name must be between 6 and 15 characters.");
+            return true; 
+        }
+    }
+    return false; 
 };
 
 export default useSignup;

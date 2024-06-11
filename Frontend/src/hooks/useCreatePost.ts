@@ -10,6 +10,17 @@ const useCreatePost = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Prevent too long input
+        if (title.length > 30) {
+            toast.error('Title must not exceed 30 characters.');
+            return;
+        }
+        if (content.length > 100) {
+            toast.error('Content must not exceed 100 characters.');
+            return; 
+        }
+
         const token = localStorage.getItem('token');
         //console.log("Token:", token);
         try {
