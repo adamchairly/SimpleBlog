@@ -16,14 +16,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // Allow only requests from this origin
+        policy.WithOrigins("https://simple-blog-client-gamma.vercel.app/") // Allow requests from the frontend
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
     });
 });
 
-// Configure Entity Framework and Identity, and MS SQL
+// Configure Entity Framework and Identity
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
