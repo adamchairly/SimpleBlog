@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
     {
-        policy.WithOrigins("https://simple-blog-client-gamma.vercel.app/") // Allow requests from the frontend
+        policy.WithOrigins("https://simple-blog-client-gamma.vercel.app") // Allow requests from the frontend
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
