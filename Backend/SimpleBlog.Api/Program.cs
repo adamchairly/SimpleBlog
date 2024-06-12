@@ -16,7 +16,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
     {
-        policy.WithOrigins("https://simple-blog-client-gamma.vercel.app") // Allow requests from the frontend
+        // Allow requests from deployed frontend and localhost for frontend testing
+        policy.WithOrigins("https://simple-blog-client-amber.vercel.app", "http://localhost:3000")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -54,6 +55,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true
     };
 });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
@@ -68,6 +70,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 
+// Swagger UI if development
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

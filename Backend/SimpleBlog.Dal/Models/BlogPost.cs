@@ -18,6 +18,5 @@ namespace SimpleBlog.Dal.Models
 
         // The creator of the post
         public string UserId { get; set; }
-
     }
 }

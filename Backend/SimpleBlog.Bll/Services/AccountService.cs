@@ -51,7 +51,6 @@ namespace SimpleBlog.Bll.Services
             throw new AuthenticationException("Login failed");
 
         }
-
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();

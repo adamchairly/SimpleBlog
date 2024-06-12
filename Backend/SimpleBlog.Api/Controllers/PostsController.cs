@@ -65,7 +65,7 @@ namespace SimpleBlog.Api.Controllers
         /// <response code="401">User is not authorized.</response>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<BlogPost>> CreatePost(CreateBlogPostDto postDto)
+        public async Task<ActionResult> CreatePost(CreateBlogPostDto postDto)
         {
             string userId = ClaimsHelper.GetUserId(User);
 

@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using SimpleBlog.Bll.Exceptions;
 using System.Net;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+
 
 namespace SimpleBlog.Api.Middleware
 {
@@ -27,6 +24,8 @@ namespace SimpleBlog.Api.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
+                
+                // 500 for every error
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
         }

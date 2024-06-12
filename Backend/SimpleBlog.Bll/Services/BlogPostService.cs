@@ -102,7 +102,7 @@ namespace SimpleBlog.Bll.Services
 
         public async Task DeletePostAsync(int id, string userId)
         {
-            var post = await _context.BlogPosts.FindAsync(id);
+            var post = await _context.BlogPosts.SingleOrDefaultAsync(p => p.Id == id);
 
             if (post == null)
             {
