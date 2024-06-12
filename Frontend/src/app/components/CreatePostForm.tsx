@@ -26,6 +26,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
+                maxLength={30}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
@@ -38,6 +39,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
+                maxLength={100}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>

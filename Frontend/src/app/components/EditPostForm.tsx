@@ -25,6 +25,7 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                maxLength={30}
                 required
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
@@ -37,6 +38,7 @@ const EditPostForm: React.FC<EditPostFormProps> = ({
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                maxLength={100}
                 required
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
